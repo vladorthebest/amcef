@@ -98,9 +98,9 @@ class PostAPIView(APIView):
         return Response({'status': True, 'data':serializer.data})
 
 
-    
-
-def deletePost(request):
-    id = request.GET.get('id')
-    UserPost.objects.filter(id=id).delete()
-    return Response({"status": "ok"})
+    def delete(self, request, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        if not pk:
+            return Response({"status": "Has not ID"})
+        UserPost.objects.filter(id=pk).delete()
+        return Response({"status": "ok"})

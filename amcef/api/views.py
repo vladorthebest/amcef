@@ -6,26 +6,65 @@ from django.db.models import Q
 import requests
 from django.core.exceptions import ObjectDoesNotExist
 
+class APIplaceholder:
 
-def check_userid(user_id):
-    response = requests.get("https://jsonplaceholder.typicode.com/users")
-    for item in response.json():
-        if item['id'] == user_id:
+    @staticmethod
+    def check_userid(user_id):
+        response = requests.get(f"https://jsonplaceholder.typicode.com/users?id={user_id}")
+        if not response.json():
+            return False
+        return True
+    
+
+    @staticmethod
+    def check_postid(id):
+        response = requests.get(f"https://jsonplaceholder.typicode.com/posts/{id}")
+        if not response.json():
+            return False
+        return True
+
+
+    @staticmethod
+    def get_post(id):
+        response = requests.get(f"https://jsonplaceholder.typicode.com/posts/{id}")
+        return response.json()
+
+
+    @staticmethod
+    def save_post(id):
+        if not APIplaceholder.check_postid(id):
+            return False
+        serializer = PostSerializer(data=APIplaceholder.get_post(id))
+        print(serializer)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
             return True
-    return False
+        else:
+            return False
+    
+    @staticmethod
+    def check_userid(user_id):
+        response = requests.get(f"https://jsonplaceholder.typicode.com/users?id={user_id}")
+        if not response.json():
+            return False
+        return True
+
+
+
 
 class PostAPIView(APIView):
 
     def get(self, request):
-    
+
         userid = request.GET.get('userid')
         id = request.GET.get('id')
-
-        try:
-            item = UserPost.objects.get(id=id)
-        except ObjectDoesNotExist:
-            return Response({"status": "Post does"})
-
+        if id:
+            try:
+                item = UserPost.objects.get(id=id)
+            except ObjectDoesNotExist:
+                if not  APIplaceholder.save_post(id):
+                    return Response({'status': 'Incorrect ID'})
+                
         if id or userid:
             items = UserPost.objects.filter(Q(userId=userid) | Q(id=id))
         else:   
@@ -37,9 +76,9 @@ class PostAPIView(APIView):
 
     def post(self, request):
         serializer = PostSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True) and check_userid(request.data['userId']):
+        if serializer.is_valid(raise_exception=True) and APIplaceholder.check_userid(request.data['userId']):
             serializer.save()
-            return Response(serializer.data)
+            return Response({'status': True, 'data':serializer.data})
         return Response({'status': False})
     
 
@@ -56,7 +95,10 @@ class PostAPIView(APIView):
         serializer = PostSerializer(data=request.data, instance=item)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)
+        return Response({'status': True, 'data':serializer.data})
+
+
+    
 
 def deletePost(request):
     id = request.GET.get('id')

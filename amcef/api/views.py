@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from main.models import UserPost
-from .serializers import PostSerializer
+from .serializers import PostSerializer, APIPostSerializer
 from django.db.models import Q
 import requests
 from django.core.exceptions import ObjectDoesNotExist
@@ -34,7 +34,7 @@ class APIplaceholder:
     def save_post(id):
         if not APIplaceholder.check_postid(id):
             return False
-        serializer = PostSerializer(data=APIplaceholder.get_post(id))
+        serializer = APIPostSerializer(data=APIplaceholder.get_post(id))
         print(serializer)
         if serializer.is_valid(raise_exception=True):
             serializer.save()

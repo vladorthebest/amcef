@@ -5,51 +5,7 @@ from .serializers import PostSerializer, APIPostSerializer
 from django.db.models import Q
 import requests
 from django.core.exceptions import ObjectDoesNotExist
-
-class APIplaceholder:
-
-    @staticmethod
-    def check_userid(user_id):
-        response = requests.get(f"https://jsonplaceholder.typicode.com/users?id={user_id}")
-        if not response.json():
-            return False
-        return True
-    
-
-    @staticmethod
-    def check_postid(id):
-        response = requests.get(f"https://jsonplaceholder.typicode.com/posts/{id}")
-        if not response.json():
-            return False
-        return True
-
-
-    @staticmethod
-    def get_post(id):
-        response = requests.get(f"https://jsonplaceholder.typicode.com/posts/{id}")
-        return response.json()
-
-
-    @staticmethod
-    def save_post(id):
-        if not APIplaceholder.check_postid(id):
-            return False
-        serializer = APIPostSerializer(data=APIplaceholder.get_post(id))
-        print(serializer)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return True
-        else:
-            return False
-    
-    @staticmethod
-    def check_userid(user_id):
-        response = requests.get(f"https://jsonplaceholder.typicode.com/users?id={user_id}")
-        if not response.json():
-            return False
-        return True
-
-
+from .PlaceholderAPI import APIplaceholder
 
 
 class PostAPIView(APIView):
@@ -79,7 +35,7 @@ class PostAPIView(APIView):
         if serializer.is_valid(raise_exception=True) and APIplaceholder.check_userid(request.data['userId']):
             serializer.save()
             return Response({'status': True, 'data':serializer.data})
-        return Response({'status': False})
+        return Response({'status': 'Incorrect userId'})
     
 
     def put(self, request, *args, **kwargs):
@@ -101,6 +57,6 @@ class PostAPIView(APIView):
     def delete(self, request, *args, **kwargs):
         pk = kwargs.get("pk", None)
         if not pk:
-            return Response({"status": "Has not ID"})
+            return Response({"status": "Incorrect ID"})
         UserPost.objects.filter(id=pk).delete()
-        return Response({"status": "ok"})
+        return Response({"status": f"Post ID={pk} deleted!"})

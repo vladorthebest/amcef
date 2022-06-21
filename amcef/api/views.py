@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .PlaceholderAPI import APIplaceholder
 
 
-class PostAPIView(APIView):
+class CreateGetAPIView(APIView):
 
     def get(self, request):
 
@@ -37,6 +37,9 @@ class PostAPIView(APIView):
             return Response({'status': True, 'data':serializer.data})
         return Response({'status': 'Incorrect userId'})
     
+
+
+class PutDeleteAPIView(APIView):
 
     def put(self, request, *args, **kwargs):
         pk = kwargs.get("pk", None)

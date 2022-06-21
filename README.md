@@ -2,7 +2,8 @@
 
 **Test task for the company AMCEF**
 Developed by **Nosov Vladyslav**
-API for work with posts in DataBase and third party APIs.
+API for working with posts in the database and working with third-party APIs.
+
 
 ## Requirements
 
@@ -20,7 +21,7 @@ API for work with posts in DataBase and third party APIs.
 
 ## Installation
 
-#### Virtual environment
+### Virtual environment
 
 Сreating a virtual environment
 (in the console)
@@ -43,12 +44,12 @@ Deactivating
 deactivate
 ```
 
-#### Installing Libraries
+### Installing Libraries
 ```
 cd amcef
 pip install -r requirements.txt
 ```
-#### Project start
+### Project start
 Migrations
 ```
 cd amcef
@@ -58,4 +59,50 @@ python manage.py migrate
 Launch of the project
 ```
 python manage.py runserver
+```
+
+
+
+## Functional
+
+### Getting all posts
+Method **GET**
+```
+../api/posts
+```
+### Getting posts by id or userId
+Method **GET**
+```
+../api/posts?id=8?userid=9
+```
+### Create new post
+Method **POST**
+```
+../api/posts
+```
+Request body
+```
+{
+    "userId": 1,
+    "title": "char",
+    "body": "char"
+}
+```
+### Update post by ID
+Method **PUT**
+```
+../api/posts/{id}
+```
+Request body
+```
+{
+    "userId": 1,
+    "title": "char",
+    "body": "char"
+}
+```
+### Delete post by ID
+Method **DELETE**
+```
+../api/posts/{id}
 ```
